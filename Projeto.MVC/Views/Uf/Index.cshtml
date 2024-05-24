@@ -1,0 +1,68 @@
+﻿<html>
+    <head>
+        <title>Projeto MVC</title>
+            <meta charset="utf-8">
+            <meta name="keywords" content="html, css, js, site">
+            <meta name="robots" content="index">
+    </head>
+    <body>
+        <button id="addUf">ADD UF</button>
+        <button id="updateUf">UPDATE UF</button>
+        <button id="getUfs">GET UFs</button>
+        <button id="deleteUf">DELETE UF</button>
+    </body>
+</html>
+
+<script>
+    document
+        .getElementById("addUf")
+        .addEventListener("click", async (ev) => {
+            const response = await fetch("/uf/add", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Nome: "São Paulo",
+                    Sigla: "SP",
+                })
+            })
+            console.log(await response.json())
+        })
+
+    document
+        .getElementById("updateUf")
+        .addEventListener("click", async (ev) => {
+            const response = await fetch("/uf/update", {
+                method: "PUT",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Nome: "São Paulo UPDATED!",
+                    Sigla: "SP",
+                })
+            })
+            console.log(await response.json())
+        })
+
+    document
+        .getElementById("getUfs")
+        .addEventListener("click", async (ev) => {
+            const response = await fetch("/uf/get")
+            const ufs = await response.json()
+            console.log(ufs)
+        })
+
+    document
+        .getElementById("deleteUf")
+        .addEventListener("click", async (ev) => {
+            const siglaToDelete = "SP"
+            const response = await fetch(`/uf/delete/${siglaToDelete}`, {
+                method: "DELETE"
+            })
+            console.log(await response.json())
+        })
+</script>
