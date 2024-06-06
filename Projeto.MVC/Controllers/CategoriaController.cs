@@ -6,7 +6,12 @@ namespace Projeto.Api.Controllers
 {
     public class CategoriaController(IConfiguration config) : Controller
     {
-        [HttpGet("[controller]/[action]")]
+		public IActionResult Index()
+		{
+			return View();
+		}
+
+		[HttpGet("[controller]/[action]")]
         public IEnumerable<Categoria> Get() => new CategoriaDA(config).GetAll();
 
         [HttpPost("[controller]/[action]")]
