@@ -1,3 +1,6 @@
+using Dapper;
+using Projeto.MVC.MySqlConfig;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
@@ -9,7 +12,9 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
+SqlMapper.AddTypeHandler(new MySqlGuidTypeHandler());
+SqlMapper.RemoveTypeMap(typeof(Guid));
+SqlMapper.RemoveTypeMap(typeof(Guid?));
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

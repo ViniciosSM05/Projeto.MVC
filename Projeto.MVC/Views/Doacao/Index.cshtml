@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doação</title>
+    <link rel="stylesheet" href="./css/doacao/styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main>
+        <div id="header">
+        <h1 id="page-title">Juntos pelo Edu</h1>
+        <div id="header-buttons">
+            <button onclick="remove()" class="filled-button">Apagar</button>
+            <button onclick="edit()" class="filled-button">Editar</button>
+        </div>
+        </div>
+        <hr>
+        <div id="content">
+            <div id="main-container">
+                <p id="donate-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore alias commodi, nemo hic voluptas repudiandae pariatur architecto similique ducimus laudantium, consequuntur nihil molestiae, provident cumque accusamus! Recusandae debitis perferendis praesentium? Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae, ea nobis! Eius neque nemo adipisci accusantium, vel necessitatibus repellat minima fugiat amet. Odit quidem deleniti nulla, impedit accusamus accusantium voluptatem.</p>
+            </div>
+            <div id="donate-container">
+                <div id="donate-info">
+                    <div>
+                        <div class="progress">
+                            <div id="total-donate" class="progress-bar"></div>
+                        </div>
+                    </div>
+                    <div id="collected-container">
+                        <span id="">Arrecadado</span>
+                        <span id="value">R$ 25.000,00</span>
+                    </div>
+                    <div id="goal-container">
+                        <span>Meta</span>
+                        <span id="goal-value">R$ 50.000,00</span>
+                    </div>
+                    <div id="founders-container">
+                        <span>Apoiadores</span>
+                        <span id="founders-value">956</span>
+                    </div>
+					<div>
+                        <button onclick="donate()" class="filled-button">Doe</button>
+                    </div>
+                </div>
+                <div id="donate-owner">
+                    <div><img src="src/image.png" alt="" width="100"></div>
+                    <div id="owner-info">
+                        <div>
+                            <span id="owner-text">Criado em:</span>
+                            <span id="create-at">Desde janeiro de 2024</span>
+                        </div>
+                        <div>
+                            <span id="owner-text">Por:</span>
+                            <span id="owner-value">Ryan Gosling</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="modal" class="modal">
+            <div class="modal-content">
+                <div id="title-input">
+                    <label for="valor_donate">Valor</label>
+                    <input type="text" name="title" id="valor_donate">
+                </div>
+                <div id="modal-footer">
+                    <button onclick="cancelar()" class="outlined-button">Cancelar</button>
+                    <button onclick="finalizar()" class="filled-button">Doar</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+    <script>
+        const donateId = new URLSearchParams(window.location.search).get('id');
+        let page = null
+        const getUser = async (id) => {
+            const response = await fetch("/usuario/get", {
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify()
+            })
+
+            const data = await response.json()
+            return data?.find(user => user.id === id)
+
+        }
+
+        const getValues = async (id) => {
+            const response = await fetch("/doacao/get", {
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify()
+            })
+
+            const data = await response.json()
+            return data?.filter(donate => donate.anuncio_Id === id)
+
+        }
+
+        
+        const getDonate = async () => {
+            const response = await fetch("/anuncio/get", {
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify()
+            })
+            const values = await response.json()
+
+            page = values?.find(values => values.id === donateId)
+          
+        }
+
+
+        const setPage = async () => {
+            await getDonate()
+            const user = await getUser(page.usuario_Id)
+            const donates = await getValues(page.id)
+
+            const totalDonates = donates.reduce((a, b) => a + b.valor, 0)
+            const porcetagem = totalDonates * 100 / page.meta;
+            const totalPorcetagem = porcetagem > 100 ? 100 : porcetagem
+
+            document.querySelector("#donate-description").innerHTML = page.descricao
+            document.querySelector("#goal-value").innerHTML = page.meta
+            document.querySelector("#page-title").innerHTML = page.titulo
+            document.querySelector("#owner-value").innerHTML = user.nome
+            document.querySelector("#create-at").innerHTML = new Date(page.data).toLocaleDateString('pt-BR')
+            document.querySelector("#value").innerHTML = `R$ ${totalDonates}`;
+            document.querySelector("#founders-value").innerHTML = donates.length ?? 0;
+            document.querySelector("#total-donate").style.width = `${totalPorcetagem}%`
+        }
+
+        var modal = document.getElementById("modal");
+
+        const cancelar = () => {
+            modal.style.display = "none";
+            document.querySelector('#valor_donate').value = ''
+
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                cancelar()
+            }
+        }
+        const donate = () => {
+            modal.style.display = "block";
+        }
+
+        const finalizar = async () => {
+            const value = document.querySelector('#valor_donate').value;
+
+            const response = await fetch("/doacao/add", {
+                method: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Valor: value,
+                    Data: new Date(),
+                    Anuncio_Id: donateId
+                })
+            })
+
+            cancelar()
+            setPage()
+        }
+
+        const removeDep = async () => {
+            const donates = await getValues(page.id)
+
+            await donates.forEach(async (donate) => {
+                await fetch("/doacao/delete/" + donate.id, {
+                    method: "DELETE",
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                })
+            })
+
+        }
+
+        const remove = async () => {
+            await removeDep()
+            
+            const response = await fetch("/anuncio/delete/" + donateId, {
+                method: "DELETE",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            window.location.replace(`home`)
+        }
+
+        const edit = async () => {
+            window.location.replace(`anuncio?id=${donateId}`)
+        }
+
+        setPage()
+    </script>
+</body>
+</html>
