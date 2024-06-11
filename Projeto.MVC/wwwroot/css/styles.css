@@ -1,0 +1,58 @@
+p {
+    margin: 0;
+}
+
+html {
+    padding: 0;
+}
+
+input,
+textarea,
+body {
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+body{
+    margin: 0
+}
+main {
+    padding: 4rem;
+}
+
+.outlined-button {
+    background-color: transparent;
+    width: 100%;
+    color: #355dea;
+    border: none;
+    border: 1px solid #355dea;
+    border-radius: 100rem;
+    font-weight: 900;
+    padding: 0.7rem;
+}
+
+.filled-button {
+    background-color: transparent;
+    width: 100%;
+    color: white;
+    border: none;
+    border: 1px solid #355dea;
+    background-color: #355dea;
+    border-radius: 100rem;
+    font-weight: 900;
+    padding: 0.7rem;
+}
+
+.progress {
+    width: 100%;
+    height: 5px;
+    background-color: lightgrey;
+    border-radius: 100rem;
+}
+
+.progress-bar {
+    width: 50%;
+    height: 100%;
+    background-color: #355dea;
+    border-radius: 100rem;
+}

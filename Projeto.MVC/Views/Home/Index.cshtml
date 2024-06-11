@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="./css/home/styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lalezar&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <img src="src/header.png" alt="" id="img-header">
+        <div id="header-buttons">
+            <button id="login">Login</button>
+            <button id="create">Criar conta </button>
+        </div>
+        <div id="header-title-container">
+            <h1 id="header-title"><span>SUA <span id="header-titler-first-line">DOAÇÃO</span></span><span id="header-titler-second-line">pode salvar vidas</span></h1>
+        </div>
+    </header>
+    <main>
+        <div id="first-section">
+            <div id="help-helena">
+                <h3>Ajude a Helena</h3>
+                <div id="help-helena-text-container">
+                    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Architecto magni nisi voluptatem porro ipsam culpa, blanditiis optio ipsa sapiente repellat fugit maiores debitis? Reprehenderit natus enim voluptates. Fugiat, perferendis dicta!</p>
+                    <img src="src/helena.png" alt="">
+                </div>
+                <button class="outlined-button">Doar</button>
+            </div>
+            <div id="salve-lifes">
+                <div id="salve-lifes-container">
+                    <div id="save-lifes-container-values">
+                        <div id="save-lifes-values">
+                            <h2>1.938.254</h2>
+                            <span>vidas salvas</span>
+                        </div>
+                    </div>
+                    <div id="save-lifes-buttons">
+                        <button class="filled-button">Como posso ajudar?</button>
+                        <button onclick="newAnnounce()" class="outlined-button">Criar um anúncio</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div id="second-section">
+            <div id="second-section-text">
+                <h2>Salve uma <span>vida</span></h2>
+                <span id="second-section-text-span">Cerca de <span>150 mil pessoas</span> morrem por ano no Brasil por falta de dinheiro para um tratamento. Você pode mudar isso. <span>Doe.</span></span>
+            </div>
+            <img id="second-section-image" src="src/save-one-life.png" alt="">
+        </div>
+        <div id="third-section">
+            <h4>Acontecendo agora</h4>
+            <div id="third-section-cards" style="flex-wrap: wrap"></div>
+        </div>
+    </main>
+    <script>
+        const getDonates = async () => {
+            const response = await fetch("/doacao/get", {
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify()
+            })
+
+            const data = await response.json()
+            return data
+        }
+
+        const getCards = async () => {
+            const cardsResponse = await fetch("/anuncio/get", {
+                method: "GET",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                // body: JSON.stringify(object)
+            });
+            
+            const cards = await cardsResponse.json()
+            return cards
+        }
+
+
+        const buttonFunction = (id) => {
+             window.location.replace(`doacao?id=${id}`)
+        }
+        const createCards = async () => {
+            const cards = await getCards();
+            const cardDivs = document.getElementById('third-section-cards');
+            const donates = await getDonates()
+
+            cards.forEach((card, index) => {
+                const newCard = document.createElement('div')
+                const cardDonate= donates?.filter(donate => donate.anuncio_Id === card.id)
+                const totalDonates = cardDonate.reduce((a, b) => a + b.valor, 0)
+                const porcetagem = totalDonates * 100 / card.meta;
+                const totalPorcetagem = porcetagem > 100 ? 100 : porcetagem
+
+                const percentagemString = `${totalPorcetagem}%`
+
+                newCard.className = 'card'
+                newCard.innerHTML = (`<img src="src/edu.png" alt="">
+                                        <div>
+                                            <span class="card-person-name">${card.titulo}</span>
+                                             <div id="main-element">
+                                                <div class="progress">
+                                                                    <div class="progress-bar" style="width: ${percentagemString}"></div>
+                                                </div>
+                                                                <span>${percentagemString}</span>
+                                                <button id="button-${index}"class="outlined-button know-more-button">Saber mais</button>
+                                            </div>
+                                        </div>`);
+                cardDivs.appendChild(newCard)
+
+                const cardButton = document.getElementById(`button-${index}`)
+                cardButton.onclick = () => buttonFunction(card.id)
+            })
+        }
+
+        const newAnnounce = () => {
+            window.location.replace(`anuncio`)
+        }
+        createCards()
+    </script>
+</body>
+</html>

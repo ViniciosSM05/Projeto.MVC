@@ -5,8 +5,12 @@ using Projeto.MVC.Models.DataAccess;
 namespace Projeto.Api.Controllers
 {
     public class UsuarioController(IConfiguration config) : Controller
-    {
-        [HttpGet("[controller]/[action]")]
+	{
+		public IActionResult Index()
+		{
+			return View();
+		}
+		[HttpGet("[controller]/[action]")]
         public IEnumerable<Usuario> Get() => new UsuarioDA(config).GetAll();
 
         [HttpPost("[controller]/[action]")]

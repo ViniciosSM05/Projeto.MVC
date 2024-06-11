@@ -1,32 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Projeto.MVC.Models;
-using System.Diagnostics;
+using Projeto.MVC.Models.DataAccess;
 
-namespace Projeto.MVC.Controllers
+namespace Projeto.Api.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(IConfiguration config) : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
         public IActionResult Index()
         {
             return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

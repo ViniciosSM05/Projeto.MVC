@@ -1,3 +1,6 @@
+using Dapper;
+using Projeto.MVC.MySqlConfig;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
@@ -9,7 +12,9 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
+SqlMapper.AddTypeHandler(new MySqlGuidTypeHandler());
+SqlMapper.RemoveTypeMap(typeof(Guid));
+SqlMapper.RemoveTypeMap(typeof(Guid?));
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -19,7 +24,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Uf}/{action=Index}");
+    pattern: "{controller=Home}/{action=Index}");
 
 
 app.Run();

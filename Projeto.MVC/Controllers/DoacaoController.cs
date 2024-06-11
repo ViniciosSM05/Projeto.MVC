@@ -6,7 +6,11 @@ namespace Projeto.Api.Controllers
 {
     public class DoacaoController(IConfiguration config) : Controller
     {
-        [HttpGet("[controller]/[action]")]
+		public IActionResult Index()
+		{
+			return View();
+		}
+		[HttpGet("[controller]/[action]")]
         public IEnumerable<Doacao> Get() => new DoacaoDA(config).GetAll();
 
         [HttpPost("[controller]/[action]")]
